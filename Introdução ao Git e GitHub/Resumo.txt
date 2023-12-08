@@ -1,0 +1,256 @@
+Link para download do Git: https://git-scm.com/download
+
+O Git Bach é um terminal extendido para otimizar o uso do Git
+
+-Configuração do Git
+Para alterar o tema do Git Bash, clique com o botão direito, vá em Options e escolha o Look desejado.
+
+git config
+
+usage: git config [<options>]
+
+Config file location
+    --[no-]global         use global config file
+    --[no-]system         use system config file
+    --[no-]local          use repository config file
+    --[no-]worktree       use per-worktree config file
+    -f, --[no-]file <file>
+                          use given config file
+    --[no-]blob <blob-id> read config from given blob object
+
+Action
+    --[no-]get            get value: name [value-pattern]
+    --[no-]get-all        get all values: key [value-pattern]
+    --[no-]get-regexp     get values for regexp: name-regex [value-pattern]
+    --[no-]get-urlmatch   get value specific for the URL: section[.var] URL
+    --[no-]replace-all    replace all matching variables: name value [value-pattern]
+    --[no-]add            add a new variable: name value
+    --[no-]unset          remove a variable: name [value-pattern]
+    --[no-]unset-all      remove all matches: name [value-pattern]
+    --[no-]rename-section rename section: old-name new-name
+    --[no-]remove-section remove a section: name
+    -l, --[no-]list       list all
+    --[no-]fixed-value    use string equality when comparing values to 'value-pattern'
+    -e, --[no-]edit       open an editor
+    --[no-]get-color      find the color configured: slot [default]
+    --[no-]get-colorbool  find the color setting: slot [stdout-is-tty]
+
+Type
+    -t, --[no-]type <type>
+                          value is given this type
+    --bool                value is "true" or "false"
+    --int                 value is decimal number
+    --bool-or-int         value is --bool or --int
+    --bool-or-str         value is --bool or string
+    --path                value is a path (file or directory name)
+    --expiry-date         value is an expiry date
+
+Other
+    -z, --[no-]null       terminate values with NUL byte
+    --[no-]name-only      show variable names only
+    --[no-]includes       respect include directives on lookup
+    --[no-]show-origin    show origin of config (file, standard input, blob, command line)
+    --[no-]show-scope     show scope of config (worktree, local, global, system, command)
+    --[no-]default <value>
+                          with --get, use default value when missing entry
+
+-Configurar nome e e-mail do usuário
+git config --global user.name nomedousuário
+git config --global user.email seuemail
+
+-Configurar branch padrão
+git config --global init.defaultBranch main
+
+-Listar configurações globais
+git config --global --list
+
+-Autenticação
+Por motivos de segurança, não é mais aceito a autenticação por senha para sincronização online. Usa-se token ou chave.
+
+  1. Autenticação via TOKEN
+
+	Criar token na plataforma GitHub em Settings -> Developer Settings -> Personal Access -> Tokens (classic) -> Generate new token (classic)
+
+	Copiar o código de acesso e colar no Git Bash ao solicitar o password
+	Para salvar a autenticação utilize o comando:
+	$ git config --global credential.helper store
+
+	Local onde ficará armazenado
+	$ git --global --show-unit credential.helper
+	
+	Exibir as configurações armazenadas no arquivo .gitconfig
+	$ cat .gitconfig
+
+	Exibir as credenciais armazenadas
+	$ cat .git-credentials
+
+  2. Autenticação via Chave SSH (Secure SHELL) Conecta de forma segura e criptografada entre o PC e o GitHub
+	
+	2.1 Verificar se existem chaves no PC
+	   $ ls -al ~/.ssh
+
+	2.2 Adicionar a chave ao SSH Agent
+	   $ eval "$(ssh-agent -s)"
+	   $ ssh-add ~/.ssh/id_ed25519
+	   $ ssh-keygen -t ed25519 -C "seuemail@exemplo.com"
+
+	2.3 Copiar chave pública
+	   $ cd ~/.ssh
+	   $ ls
+	   $ cat id_ed25519.pub
+
+	2.4 Adicionar a chave ública no GitHub
+	   Em Settings -> Access -> SSH and GPG keys -> New SSH key
+
+
+-Criando e clonando repositórios
+
+Para criar um repositório há duas maneiras
+
+	1. A partir de um diretório local
+	   $ mkdir 'repo-local'
+           $ cd repo-local
+	   $ git init
+
+	Obs.: Para verificar os diretórios vinculados
+	   $ git remote -v
+	
+	Para vincular o repositório local ao repositório remoto
+	$ git remote add origin urlremoto
+
+	2. A partir de um clone de um repositório remoto
+	   Criar um repositório no GitHub (Public ou Private)
+		Add README file (Arquivo que descreve o projeto)
+		Add gitignore (arquivos que não serão enviados para o repositório remoto)
+		Choose a license (formas de utilização do repositório)
+		
+	   $ git clone urlremoto 'repo-clonado'
+
+	Obs: Para vincular uma branch específica
+	     $ git clone urlremoto --branch 'featurel' --single-branch
+
+
+-Salvando Alterações no Repositório Remoto
+
+Para verificar a área de preparação e estados dos arquivos
+$ git status
+
+Exemplo
+$ touch README.md (cria um arquivo README.md)
+$ git status
+
+Obs: readme.io (site para criar README)
+
+$ git add README.md (adiciona à area de preparação)
+
+$ git commit -m "commit inicial" (atualiza as alterações no repositório local)
+$ git log (mostra as alterações no repositório)
+
+Obs: pastas vazias não são reconhecidas como alterações
+
+Exemplo:
+$ mkdir novapasta
+$ git status (não vai aparecer a alteração na árvore de trabalho)
+
+Outra forma de ignorar pastas ou arquivos é adicionar ao .gitignore
+$ echo novapasta/ > .gitignore
+
+Para o Git reconhecer um diretório vazio
+$ touch novapasta/.gitkeep
+
+
+-Desfazendo Alterações no Repositório Local
+
+$ git init (inicia um diretório como repositório local)
+$ rm -rf .git (desfaz o diretório como repositório .git)
+
+Para restaurar um arquivo para um versão anterior ao commit
+Exemplo: Alterou-se o arquivo README.md
+$ git restore README.md
+
+Para alterar a mensagem do último commit
+$ git commit --amend -m "Nova Mensagem"
+
+Para desfazer um commit
+$ git reset --soft 'hashdocommit' (o reset soft retorna as alterações para a área de preparação)
+$ git reset --mixed 'hashdocommit' (padrão do comando reset, ele retorna as alterações para a árvore de trabalho 'untracked')
+$ git reset --hard 'hashdocommit' (exclui as últimas alterações)
+
+$ git reflog (histórico mais detalhado)
+
+
+-Enviando e Baixando Alterações com o Repositório Remoto
+
+Para enviar alterações:
+$ git remote add origin urlremoto (conecta com o repositório remoto)
+$ git push -u origin main (main é o nome do branch local, nesse comando forçará a modificar o nome do branch remoto)
+
+Para baixar alterações:
+Após modificar os arquivos no repositório remoto, para baixar as alterações para o repositório local fazemos:
+$ git pull
+
+-Branches
+Branch é uma ramificação do projeto. É utilizada para testar novos recursos no projeto sem afetar a branch principal
+
+Ao criar uma nova branch, ela aponta para o último commit da branch anterior. Agora elas são independentes e podem receber commits separadamente.
+
+Exemplo:
+$ echo "#commit-0-branch-main" > commit-0-branch-main.txt
+$ git add .
+$ git commit -m "commit 0"
+
+$ echo "#commit-1-branch-main" > commit-1-branch-main.txt
+$ git add .
+$ git commit -m "commit 1"
+
+$ echo "#commit-2-branch-main" > commit-2-branch-main.txt
+$ git add .
+$ git commit -m "commit 2"
+
+$ git status (irá mostrar a branch main apontando para a branch commit2)
+
+Criando uma nova branch
+$ git checkout -b novabranch
+
+$ git status (irá mostrar as branchs main e novabranch apontando para o commit2)
+
+Novo commit
+$ echo $ echo "#commit-3-branch-main" > commit-3-branch-main.txt
+$ git add .
+$ git commit -m "commit 3"
+
+$ git status (irá mostrar a branch novabranch apontando para o commit3 e a branch main para o commit 2)
+
+Para trabalhar na branch main
+$ git checkout main
+
+$ git branch -v (lista o último commit de cada branch)
+
+Para mostrar as alterações realizadas na branch novabranch, devemos mesclar as branches
+$ git merge novabrunch
+
+Para listar as branches
+$ git branch
+
+Para excluir brunch criada
+$ git branch -d novabrunch
+
+
+-Comandos úteis
+$ git fetch (baixa as alterações)
+$ git merge (mescla as alterações)
+$ git pull (fetch + merge)
+$ git diff main origin/main (mostra as diferenças entre o repositório remoto e local)
+
+$git clone urlremoto --branch branchdesejada --single -branch (copia a branch desejada para o repositório remoto)
+
+$ git stash (arquiva as modificações)
+$ git stash  list (lista as modificações arquivadas)
+
+$ git checkout -b novabranch (cria nova branch sem as alterações acima)
+$ git stash pop (mantém o arquivo)
+$ git stash apply (não mantém o arquivo)
+
+Link para leitura:
+https://git-scm.com/book/en/v2
+
